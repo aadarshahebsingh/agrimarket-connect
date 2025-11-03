@@ -7,12 +7,16 @@ export const ROLES = {
   ADMIN: "admin",
   USER: "user",
   MEMBER: "member",
+  FARMER: "farmer",
+  CUSTOMER: "customer",
 } as const;
 
 export const roleValidator = v.union(
   v.literal(ROLES.ADMIN),
   v.literal(ROLES.USER),
   v.literal(ROLES.MEMBER),
+  v.literal(ROLES.FARMER),
+  v.literal(ROLES.CUSTOMER),
 );
 export type Role = Infer<typeof roleValidator>;
 
@@ -32,12 +36,57 @@ const schema = defineSchema(
       role: v.optional(roleValidator), // role of the user. do not remove
     }).index("email", ["email"]), // index for the email. do not remove or modify
 
-    // add other tables here
+    crops: defineTable({
+      farmerId: v.id("users"),
+      farmerName: v.string(),
+      name: v.string(),
+      type: v.string(),
+      imageUrl: v.string(),
+      location: v.object({
+        lat: v.number(),
+        lng: v.number(),
+        address: v.string(),
+      }),
+      harvestDate: v.string(),
+      quantity: v.number(),
+      unit: v.string(),
+      pricePerUnit: v.number(),
+      diseaseAnalysis: v.optional(v.object({
+        diseaseName: v.optional(v.string()),
+        confidence: v.optional(v.number()),
+        remedy: v.optional(v.string()),
+        isHealthy: v.boolean(),
+      })),
+      published: v.boolean(),
+      views: v.number(),
+      orders: v.number(),
+    })
+      .index("by_farmer", ["farmerId"])
+      .index("by_published", ["published"]),
 
-    // tableName: defineTable({
-    //   ...
-    //   // table fields
-    // }).index("by_field", ["field"])
+    orders: defineTable({
+      customerId: v.id("users"),
+      customerName: v.string(),
+      customerEmail: v.string(),
+      farmerId: v.id("users"),
+      farmerName: v.string(),
+      cropId: v.id("crops"),
+      cropName: v.string(),
+      cropImage: v.string(),
+      quantity: v.number(),
+      pricePerUnit: v.number(),
+      totalPrice: v.number(),
+      deliveryAddress: v.string(),
+      status: v.union(
+        v.literal("pending"),
+        v.literal("confirmed"),
+        v.literal("shipped"),
+        v.literal("delivered"),
+        v.literal("cancelled")
+      ),
+    })
+      .index("by_customer", ["customerId"])
+      .index("by_farmer", ["farmerId"]),
   },
   {
     schemaValidation: false,
