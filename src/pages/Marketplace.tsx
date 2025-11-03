@@ -23,13 +23,34 @@ const CROP_TYPES = [
   "Other",
 ];
 
+const PRICE_RANGES = [
+  { label: "All Prices", min: 0, max: Infinity },
+  { label: "Under ₹50", min: 0, max: 50 },
+  { label: "₹50 - ₹100", min: 50, max: 100 },
+  { label: "₹100 - ₹200", min: 100, max: 200 },
+  { label: "Above ₹200", min: 200, max: Infinity },
+];
+
 export default function Marketplace() {
-  const { isLoading, isAuthenticated } = useAuth();
+  const { isLoading, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState("all");
+  const [selectedPriceRange, setSelectedPriceRange] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const crops = useQuery(api.crops.getMarketplaceCrops, {
+  const allCrops = useQuery(api.crops.getMarketplaceCrops, {
     cropType: selectedType,
+  });
+
+  // Filter crops based on price range and search query
+  const crops = allCrops?.filter((crop) => {
+    const priceRange = PRICE_RANGES[selectedPriceRange];
+    const matchesPrice = crop.pricePerUnit >= priceRange.min && crop.pricePerUnit < priceRange.max;
+    const matchesSearch = searchQuery === "" || 
+      crop.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      crop.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      crop.location.address.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesPrice && matchesSearch;
   });
 
   if (isLoading) {
@@ -78,20 +99,64 @@ export default function Marketplace() {
           </div>
 
           {/* Filters */}
-          <div className="mb-6 flex items-center gap-4">
-            <div className="flex-1 max-w-xs">
-              <Select value={selectedType} onValueChange={setSelectedType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter by crop type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {CROP_TYPES.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type === "all" ? "All Crops" : type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <div className="mb-6 space-y-4">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                <input
+                  type="text"
+                  placeholder="Search crops, location..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+              <div className="w-full md:w-48">
+                <Select value={selectedType} onValueChange={setSelectedType}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Crop Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CROP_TYPES.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type === "all" ? "All Types" : type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="w-full md:w-48">
+                <Select 
+                  value={selectedPriceRange.toString()} 
+                  onValueChange={(value) => setSelectedPriceRange(parseInt(value))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Price Range" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PRICE_RANGES.map((range, index) => (
+                      <SelectItem key={index} value={index.toString()}>
+                        {range.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
+              <span>{crops?.length || 0} crops found</span>
+              {(searchQuery || selectedType !== "all" || selectedPriceRange !== 0) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setSelectedType("all");
+                    setSelectedPriceRange(0);
+                  }}
+                >
+                  Clear filters
+                </Button>
+              )}
             </div>
           </div>
 

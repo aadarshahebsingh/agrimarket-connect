@@ -7,6 +7,9 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { CropDetailsDialog } from "./CropDetailsDialog";
 import { EditCropDialog } from "./EditCropDialog";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
 
 interface CropCardProps {
   crop: {
@@ -40,6 +43,24 @@ interface CropCardProps {
 export function CropCard({ crop, isFarmer }: CropCardProps) {
   const [showDetails, setShowDetails] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const updateCrop = useMutation(api.crops.updateCrop);
+  const [isPublishing, setIsPublishing] = useState(false);
+
+  const handlePublishToggle = async () => {
+    setIsPublishing(true);
+    try {
+      await updateCrop({
+        cropId: crop._id,
+        published: !crop.published,
+      });
+      toast.success(crop.published ? "Crop unpublished" : "Crop published to marketplace!");
+    } catch (error) {
+      toast.error("Failed to update crop");
+      console.error(error);
+    } finally {
+      setIsPublishing(false);
+    }
+  };
 
   return (
     <>
@@ -144,8 +165,10 @@ export function CropCard({ crop, isFarmer }: CropCardProps) {
               <Button
                 variant={crop.published ? "secondary" : "default"}
                 className="flex-1"
+                onClick={handlePublishToggle}
+                disabled={isPublishing}
               >
-                {crop.published ? "Published" : "Publish"}
+                {crop.published ? "Unpublish" : "Publish"}
               </Button>
             </CardFooter>
           )}
