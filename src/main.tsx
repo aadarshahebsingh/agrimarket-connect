@@ -12,7 +12,7 @@ import Landing from "./pages/Landing.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Marketplace from "./pages/Marketplace.tsx";
 import FarmerDashboard from "./pages/FarmerDashboard.tsx";
-import CustomerDashboard from "./pages/CustomerDashboard.tsx";
+import RoleSelection from "./pages/RoleSelection.tsx";
 import "./types/global.d.ts";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
@@ -49,10 +49,10 @@ createRoot(document.getElementById("root")!).render(
           <RouteSyncer />
           <Routes>
             <Route path="/" element={<Landing />} />
-            <Route path="/auth" element={<AuthPage redirectAfterAuth="/marketplace" />} />
+            <Route path="/auth" element={<AuthPage redirectAfterAuth="/role-selection" />} />
+            <Route path="/role-selection" element={<RoleSelection />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/farmer/dashboard" element={<FarmerDashboard />} />
-            <Route path="/customer/dashboard" element={<CustomerDashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

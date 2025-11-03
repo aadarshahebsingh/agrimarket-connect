@@ -1,13 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { motion } from "framer-motion";
-import { Loader2, ShoppingCart, Sprout } from "lucide-react";
+import { Loader2, ShoppingCart, Sprout, Search } from "lucide-react";
 import { useNavigate } from "react-router";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { CropCard } from "@/components/CropCard";
 
 const CROP_TYPES = [
@@ -23,35 +24,51 @@ const CROP_TYPES = [
   "Other",
 ];
 
-const PRICE_RANGES = [
-  { label: "All Prices", min: 0, max: Infinity },
-  { label: "Under ₹50", min: 0, max: 50 },
-  { label: "₹50 - ₹100", min: 50, max: 100 },
-  { label: "₹100 - ₹200", min: 100, max: 200 },
-  { label: "Above ₹200", min: 200, max: Infinity },
-];
-
 export default function Marketplace() {
-  const { isLoading, isAuthenticated, user } = useAuth();
+  const { isLoading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState("all");
-  const [selectedPriceRange, setSelectedPriceRange] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [healthFilter, setHealthFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("newest");
 
-  const allCrops = useQuery(api.crops.getMarketplaceCrops, {
+  const crops = useQuery(api.crops.getMarketplaceCrops, {
     cropType: selectedType,
   });
 
-  // Filter crops based on price range and search query
-  const crops = allCrops?.filter((crop) => {
-    const priceRange = PRICE_RANGES[selectedPriceRange];
-    const matchesPrice = crop.pricePerUnit >= priceRange.min && crop.pricePerUnit < priceRange.max;
-    const matchesSearch = searchQuery === "" || 
-      crop.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      crop.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      crop.location.address.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesPrice && matchesSearch;
-  });
+  const filteredAndSortedCrops = useMemo(() => {
+    if (!crops) return [];
+
+    let filtered = [...crops];
+
+    // Search filter
+    if (searchQuery) {
+      filtered = filtered.filter(
+        (crop) =>
+          crop.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          crop.farmerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          crop.location.address.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Health filter
+    if (healthFilter === "healthy") {
+      filtered = filtered.filter((crop) => crop.diseaseAnalysis?.isHealthy);
+    } else if (healthFilter === "diseased") {
+      filtered = filtered.filter((crop) => !crop.diseaseAnalysis?.isHealthy);
+    }
+
+    // Sort
+    if (sortBy === "price-low") {
+      filtered.sort((a, b) => a.pricePerUnit - b.pricePerUnit);
+    } else if (sortBy === "price-high") {
+      filtered.sort((a, b) => b.pricePerUnit - a.pricePerUnit);
+    } else if (sortBy === "newest") {
+      filtered.sort((a, b) => b._creationTime - a._creationTime);
+    }
+
+    return filtered;
+  }, [crops, searchQuery, healthFilter, sortBy]);
 
   if (isLoading) {
     return (
@@ -98,65 +115,64 @@ export default function Marketplace() {
             </p>
           </div>
 
-          {/* Filters */}
-          <div className="mb-6 space-y-4">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1">
-                <input
-                  type="text"
-                  placeholder="Search crops, location..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
-              <div className="w-full md:w-48">
-                <Select value={selectedType} onValueChange={setSelectedType}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Crop Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CROP_TYPES.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type === "all" ? "All Types" : type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="w-full md:w-48">
-                <Select 
-                  value={selectedPriceRange.toString()} 
-                  onValueChange={(value) => setSelectedPriceRange(parseInt(value))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Price Range" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PRICE_RANGES.map((range, index) => (
-                      <SelectItem key={index} value={index.toString()}>
-                        {range.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+          {/* Search Bar */}
+          <div className="mb-6">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by crop name, farmer, or location..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
             </div>
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <span>{crops?.length || 0} crops found</span>
-              {(searchQuery || selectedType !== "all" || selectedPriceRange !== 0) && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setSearchQuery("");
-                    setSelectedType("all");
-                    setSelectedPriceRange(0);
-                  }}
-                >
-                  Clear filters
-                </Button>
-              )}
+          </div>
+
+          {/* Filters */}
+          <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <Select value={selectedType} onValueChange={setSelectedType}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Crop Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CROP_TYPES.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type === "all" ? "All Crops" : type}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Select value={healthFilter} onValueChange={setHealthFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Health Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="healthy">Healthy Only</SelectItem>
+                  <SelectItem value="diseased">With Disease</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sort By" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="newest">Newest First</SelectItem>
+                  <SelectItem value="price-low">Price: Low to High</SelectItem>
+                  <SelectItem value="price-high">Price: High to Low</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-center text-sm text-muted-foreground">
+              {filteredAndSortedCrops.length} crop{filteredAndSortedCrops.length !== 1 ? "s" : ""} found
             </div>
           </div>
 
@@ -165,17 +181,17 @@ export default function Marketplace() {
             <div className="flex justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin" />
             </div>
-          ) : crops.length === 0 ? (
+          ) : filteredAndSortedCrops.length === 0 ? (
             <Card className="p-12 text-center">
               <Sprout className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-lg font-semibold mb-2">No crops available</h3>
+              <h3 className="text-lg font-semibold mb-2">No crops found</h3>
               <p className="text-muted-foreground">
-                Check back later for fresh listings from farmers
+                Try adjusting your filters or check back later
               </p>
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {crops.map((crop) => (
+              {filteredAndSortedCrops.map((crop) => (
                 <CropCard key={crop._id} crop={crop} />
               ))}
             </div>

@@ -44,10 +44,8 @@ export function CropCard({ crop, isFarmer }: CropCardProps) {
   const [showDetails, setShowDetails] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const updateCrop = useMutation(api.crops.updateCrop);
-  const [isPublishing, setIsPublishing] = useState(false);
 
-  const handlePublishToggle = async () => {
-    setIsPublishing(true);
+  const handleTogglePublish = async () => {
     try {
       await updateCrop({
         cropId: crop._id,
@@ -55,10 +53,8 @@ export function CropCard({ crop, isFarmer }: CropCardProps) {
       });
       toast.success(crop.published ? "Crop unpublished" : "Crop published to marketplace!");
     } catch (error) {
-      toast.error("Failed to update crop");
+      toast.error("Failed to update crop status");
       console.error(error);
-    } finally {
-      setIsPublishing(false);
     }
   };
 
@@ -165,8 +161,7 @@ export function CropCard({ crop, isFarmer }: CropCardProps) {
               <Button
                 variant={crop.published ? "secondary" : "default"}
                 className="flex-1"
-                onClick={handlePublishToggle}
-                disabled={isPublishing}
+                onClick={handleTogglePublish}
               >
                 {crop.published ? "Unpublish" : "Publish"}
               </Button>

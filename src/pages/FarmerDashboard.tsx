@@ -6,7 +6,7 @@ import { useQuery } from "convex/react";
 import { motion } from "framer-motion";
 import { Plus, Sprout, Package, TrendingUp, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AddCropDialog } from "@/components/AddCropDialog";
 import { CropCard } from "@/components/CropCard";
 
@@ -18,6 +18,14 @@ export default function FarmerDashboard() {
   const crops = useQuery(api.crops.getFarmerCrops);
   const orders = useQuery(api.orders.getFarmerOrders);
 
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && user) {
+      if (user.role !== "farmer") {
+        navigate("/marketplace");
+      }
+    }
+  }, [isLoading, isAuthenticated, user, navigate]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -28,6 +36,16 @@ export default function FarmerDashboard() {
 
   if (!isAuthenticated) {
     navigate("/auth");
+    return null;
+  }
+
+  if (!user?.role) {
+    navigate("/role-selection");
+    return null;
+  }
+
+  if (user.role !== "farmer") {
+    navigate("/marketplace");
     return null;
   }
 
