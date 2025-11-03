@@ -8,6 +8,10 @@ export const createCrop = mutation({
     name: v.string(),
     type: v.string(),
     imageUrl: v.string(),
+    images: v.optional(v.array(v.object({
+      url: v.string(),
+      uploadedAt: v.number(),
+    }))),
     location: v.object({
       lat: v.number(),
       lng: v.number(),

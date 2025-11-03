@@ -31,6 +31,7 @@ export function AddCropDialog({ open, onOpenChange }: AddCropDialogProps) {
     unit: "kg",
     pricePerUnit: "",
   });
+  const [additionalImages, setAdditionalImages] = useState<string[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,10 +46,16 @@ export function AddCropDialog({ open, onOpenChange }: AddCropDialogProps) {
         remedy: Math.random() > 0.3 ? undefined : "Apply fungicide and ensure proper drainage",
       };
 
+      const images = additionalImages.filter(url => url.trim()).map(url => ({
+        url,
+        uploadedAt: Date.now(),
+      }));
+
       await createCrop({
         name: formData.name,
         type: formData.type,
         imageUrl: formData.imageUrl || "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800",
+        images: images.length > 0 ? images : undefined,
         location: {
           lat: 28.6139 + (Math.random() - 0.5) * 0.1,
           lng: 77.2090 + (Math.random() - 0.5) * 0.1,
@@ -74,6 +81,7 @@ export function AddCropDialog({ open, onOpenChange }: AddCropDialogProps) {
         unit: "kg",
         pricePerUnit: "",
       });
+      setAdditionalImages([]);
     } catch (error) {
       toast.error("Failed to add crop");
       console.error(error);
@@ -125,7 +133,7 @@ export function AddCropDialog({ open, onOpenChange }: AddCropDialogProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="imageUrl">Image URL</Label>
+            <Label htmlFor="imageUrl">Main Image URL</Label>
             <Input
               id="imageUrl"
               value={formData.imageUrl}
@@ -135,6 +143,41 @@ export function AddCropDialog({ open, onOpenChange }: AddCropDialogProps) {
             <p className="text-xs text-muted-foreground">
               Leave empty for default image
             </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Additional Images (Optional)</Label>
+            {additionalImages.map((url, index) => (
+              <div key={index} className="flex gap-2">
+                <Input
+                  value={url}
+                  onChange={(e) => {
+                    const newImages = [...additionalImages];
+                    newImages[index] = e.target.value;
+                    setAdditionalImages(newImages);
+                  }}
+                  placeholder="https://example.com/image.jpg"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => {
+                    setAdditionalImages(additionalImages.filter((_, i) => i !== index));
+                  }}
+                >
+                  ×
+                </Button>
+              </div>
+            ))}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setAdditionalImages([...additionalImages, ""])}
+            >
+              + Add Image
+            </Button>
           </div>
 
           <div className="space-y-2">

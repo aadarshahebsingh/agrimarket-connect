@@ -13,6 +13,7 @@ import NotFound from "./pages/NotFound.tsx";
 import Marketplace from "./pages/Marketplace.tsx";
 import FarmerDashboard from "./pages/FarmerDashboard.tsx";
 import RoleSelection from "./pages/RoleSelection.tsx";
+import CustomerOrders from "./pages/CustomerOrders.tsx";
 import "./types/global.d.ts";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
@@ -53,6 +54,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/role-selection" element={<RoleSelection />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/farmer/dashboard" element={<FarmerDashboard />} />
+            <Route path="/customer/orders" element={<CustomerOrders />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

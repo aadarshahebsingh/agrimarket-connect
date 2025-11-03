@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Id } from "@/convex/_generated/dataModel";
-import { MapPin, Calendar, Package, AlertCircle, CheckCircle, ShoppingCart } from "lucide-react";
+import { MapPin, Calendar, Package, AlertCircle, CheckCircle, ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { CheckoutDialog } from "./CheckoutDialog";
 import { api } from "@/convex/_generated/api";
@@ -15,6 +15,10 @@ interface CropDetailsDialogProps {
     name: string;
     type: string;
     imageUrl: string;
+    images?: Array<{
+      url: string;
+      uploadedAt: number;
+    }>;
     location: {
       lat: number;
       lng: number;
@@ -39,13 +43,27 @@ interface CropDetailsDialogProps {
 
 export function CropDetailsDialog({ crop, open, onOpenChange, isFarmer }: CropDetailsDialogProps) {
   const [showCheckout, setShowCheckout] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const incrementViews = useMutation(api.crops.incrementViews);
+
+  const allImages = [
+    { url: crop.imageUrl, uploadedAt: Date.now() },
+    ...(crop.images || [])
+  ];
 
   useEffect(() => {
     if (open && !isFarmer) {
       incrementViews({ cropId: crop._id });
     }
   }, [open, isFarmer]);
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+  };
 
   return (
     <>
@@ -56,12 +74,45 @@ export function CropDetailsDialog({ crop, open, onOpenChange, isFarmer }: CropDe
           </DialogHeader>
 
           <div className="space-y-6">
-            <div className="aspect-video relative overflow-hidden rounded-lg bg-muted">
+            <div className="aspect-video relative overflow-hidden rounded-lg bg-muted group">
               <img
-                src={crop.imageUrl}
+                src={allImages[currentImageIndex].url}
                 alt={crop.name}
                 className="object-cover w-full h-full"
               />
+              {allImages.length > 1 && (
+                <>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={prevImage}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={nextImage}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+                    {allImages.map((_, index) => (
+                      <div
+                        key={index}
+                        className={`h-2 w-2 rounded-full ${
+                          index === currentImageIndex ? "bg-white" : "bg-white/50"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+              <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded text-sm">
+                Uploaded: {new Date(allImages[currentImageIndex].uploadedAt).toLocaleDateString()}
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">

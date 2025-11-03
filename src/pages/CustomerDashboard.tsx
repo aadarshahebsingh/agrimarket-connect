@@ -4,14 +4,19 @@ import { useAuth } from "@/hooks/use-auth";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { motion } from "framer-motion";
-import { ShoppingCart, Package, Loader2, TrendingUp } from "lucide-react";
+import { ShoppingCart, Package, Loader2, TrendingUp, LogOut } from "lucide-react";
 import { useNavigate } from "react-router";
 
 export default function CustomerDashboard() {
-  const { isLoading, isAuthenticated, user } = useAuth();
+  const { isLoading, isAuthenticated, user, signOut } = useAuth();
   const navigate = useNavigate();
 
   const orders = useQuery(api.orders.getCustomerOrders);
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   if (isLoading) {
     return (
@@ -42,6 +47,10 @@ export default function CustomerDashboard() {
           <div className="flex items-center gap-4">
             <Button variant="outline" onClick={() => navigate("/marketplace")}>
               Browse Marketplace
+            </Button>
+            <Button variant="ghost" onClick={handleLogout}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
             </Button>
           </div>
         </div>

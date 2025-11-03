@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { motion } from "framer-motion";
-import { Loader2, ShoppingCart, Sprout, Search } from "lucide-react";
+import { Loader2, ShoppingCart, Sprout, Search, LogOut } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useState, useMemo } from "react";
 import { CropCard } from "@/components/CropCard";
@@ -25,8 +25,13 @@ const CROP_TYPES = [
 ];
 
 export default function Marketplace() {
-  const { isLoading, isAuthenticated } = useAuth();
+  const { isLoading, isAuthenticated, signOut } = useAuth();
   const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/");
+  };
   const [selectedType, setSelectedType] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [healthFilter, setHealthFilter] = useState("all");
@@ -96,6 +101,10 @@ export default function Marketplace() {
             <Button variant="outline" onClick={() => navigate("/customer/orders")}>
               <ShoppingCart className="h-4 w-4 mr-2" />
               My Orders
+            </Button>
+            <Button variant="ghost" onClick={handleLogout}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
             </Button>
           </div>
         </div>
