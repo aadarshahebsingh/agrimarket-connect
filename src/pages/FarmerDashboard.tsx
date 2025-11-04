@@ -12,7 +12,7 @@ import { CropCard } from "@/components/CropCard";
 
 const translations = {
   en: {
-    agrimarket: "AgriMarket",
+    agrimarket: "Kisan Bazaar",
     marketplace: "Marketplace",
     logout: "Logout",
     welcomeBack: "Welcome back",
@@ -31,7 +31,7 @@ const translations = {
     addYourFirstCrop: "Add Your First Crop",
   },
   hi: {
-    agrimarket: "एग्रीमार्केट",
+    agrimarket: "किसान बाज़ार",
     marketplace: "बाज़ार",
     logout: "लॉग आउट",
     welcomeBack: "वापसी पर स्वागत है",

@@ -95,7 +95,7 @@ export default function Marketplace() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate("/")}>
             <img src="/logo.svg" alt="Logo" className="h-10 w-10" />
-            <h1 className="text-xl font-bold tracking-tight">AgriMarket</h1>
+            <h1 className="text-xl font-bold tracking-tight">Kisan Bazaar</h1>
           </div>
           <div className="flex items-center gap-4">
             <Button variant="outline" onClick={() => navigate("/customer/orders")}>

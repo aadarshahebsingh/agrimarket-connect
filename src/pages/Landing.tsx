@@ -27,7 +27,7 @@ export default function Landing() {
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full animate-pulse" />
             </div>
             <h1 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              AgriMarket
+              Kisan Bazaar
             </h1>
           </div>
           <div className="flex items-center gap-4">
@@ -61,7 +61,7 @@ export default function Landing() {
         >
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border-2 border-primary/30 mb-8">
             <Leaf className="h-5 w-5 text-primary animate-bounce" />
-            <span className="text-sm font-semibold text-primary">Smart Agriculture Marketplace</span>
+            <span className="text-sm font-semibold text-primary">किसान बाज़ार - Smart Agriculture Marketplace</span>
           </div>
 
           <h1 className="text-6xl md:text-7xl font-bold tracking-tight mb-6">
@@ -108,7 +108,7 @@ export default function Landing() {
         >
           <h2 className="text-4xl font-bold tracking-tight text-center mb-4">
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Why Choose AgriMarket?
+              Why Choose Kisan Bazaar?
             </span>
           </h2>
           <p className="text-center text-muted-foreground mb-16 text-lg">
@@ -210,7 +210,7 @@ export default function Landing() {
               onClick={handleGetStarted} 
               className="text-lg px-10 py-6 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg hover:shadow-xl transition-all"
             >
-              Join AgriMarket Today
+              Join Kisan Bazaar Today
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
@@ -221,7 +221,7 @@ export default function Landing() {
       <footer className="border-t py-8 bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
           <p className="flex items-center justify-center gap-2">
-            © 2024 AgriMarket. Built with 
+            © 2024 Kisan Bazaar. Built with 
             <Heart className="h-4 w-4 text-accent fill-accent animate-pulse" /> 
             for farmers and customers.
           </p>

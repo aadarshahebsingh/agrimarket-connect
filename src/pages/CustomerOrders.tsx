@@ -51,7 +51,7 @@ export default function CustomerOrders() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate("/")}>
             <img src="/logo.svg" alt="Logo" className="h-10 w-10" />
-            <h1 className="text-xl font-bold tracking-tight">AgriMarket</h1>
+            <h1 className="text-xl font-bold tracking-tight">Kisan Bazaar</h1>
           </div>
           <Button variant="outline" onClick={() => navigate("/marketplace")}>
             <ArrowLeft className="h-4 w-4 mr-2" />
