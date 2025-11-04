@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, internalMutation } from "./_generated/server";
 import { getCurrentUser } from "./users";
 
 // Create a new crop listing
@@ -158,5 +158,51 @@ export const incrementViews = mutation({
     await ctx.db.patch(args.cropId, {
       views: (crop.views || 0) + 1,
     });
+  },
+});
+
+// Internal mutation for seeding data
+export const createCropInternal = internalMutation({
+  args: {
+    name: v.string(),
+    type: v.string(),
+    imageUrl: v.string(),
+    location: v.object({
+      lat: v.number(),
+      lng: v.number(),
+      address: v.string(),
+    }),
+    harvestDate: v.string(),
+    quantity: v.number(),
+    unit: v.string(),
+    pricePerUnit: v.number(),
+    diseaseAnalysis: v.optional(v.object({
+      diseaseName: v.optional(v.string()),
+      confidence: v.optional(v.number()),
+      remedy: v.optional(v.string()),
+      isHealthy: v.boolean(),
+    })),
+    published: v.boolean(),
+    farmerName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const cropId = await ctx.db.insert("crops", {
+      farmerId: "demo_farmer_id" as any,
+      farmerName: args.farmerName,
+      name: args.name,
+      type: args.type,
+      imageUrl: args.imageUrl,
+      location: args.location,
+      harvestDate: args.harvestDate,
+      quantity: args.quantity,
+      unit: args.unit,
+      pricePerUnit: args.pricePerUnit,
+      diseaseAnalysis: args.diseaseAnalysis,
+      published: args.published,
+      views: 0,
+      orders: 0,
+    });
+
+    return cropId;
   },
 });
