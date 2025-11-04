@@ -40,7 +40,7 @@ export const seedCrops = internalAction({
       {
         name: "Fresh Tomatoes",
         type: "Tomato",
-        imageUrl: "https://media.istockphoto.com/id/1316145932/photo/table-top-view-of-spicy-food.jpg?s=612x612&w=0&k=20&c=eaKRSIAoRGHMibSfahMyQS6iFADyVy1pnPdy1O5rZ98=",
+        imageUrl: "https://images.unsplash.com/photo-1546094096-0df4bcaaa337?w=800",
         address: "Village Nashik, Maharashtra",
         quantity: 150,
         unit: "quintal",
@@ -50,7 +50,7 @@ export const seedCrops = internalAction({
       {
         name: "Organic Potatoes",
         type: "Potato",
-        imageUrl: "https://media.istockphoto.com/id/157430678/photo/three-potatoes.jpg?s=612x612&w=0&k=20&c=qkMoKnmNMoOXyUZZf6B-sNHDRu5ChtZDm7hKe76R2yg=",
+        imageUrl: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=800",
         address: "Village Agra, Uttar Pradesh",
         quantity: 400,
         unit: "quintal",
@@ -60,7 +60,7 @@ export const seedCrops = internalAction({
       {
         name: "Red Onions",
         type: "Onion",
-        imageUrl: "https://media.istockphoto.com/id/1333073621/photo/red-onion-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=xOdZKBwXF5Ks5Hv5F-Tz5Zz5Zz5Zz5Zz5Zz5Zz5Zz5Zz5=",
+        imageUrl: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=800",
         address: "Village Lasalgaon, Nashik, Maharashtra",
         quantity: 250,
         unit: "quintal",
@@ -90,7 +90,7 @@ export const seedCrops = internalAction({
       {
         name: "Infected Wheat Crop",
         type: "Wheat",
-        imageUrl: "https://media.istockphoto.com/id/1322157562/photo/wheat-field-damaged-by-heavy-rain-and-hail.jpg?s=612x612&w=0&k=20&c=9kF8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8=",
+        imageUrl: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800",
         address: "Village Ludhiana, Punjab",
         quantity: 600,
         unit: "quintal",
@@ -100,7 +100,7 @@ export const seedCrops = internalAction({
       {
         name: "Diseased Wheat",
         type: "Wheat",
-        imageUrl: "https://media.istockphoto.com/id/1354053364/photo/wheat-crop-damaged-by-disease.jpg?s=612x612&w=0&k=20&c=8kF8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8=",
+        imageUrl: "https://images.unsplash.com/photo-1628088062854-d1870b4553da?w=800",
         address: "Village Meerut, Uttar Pradesh",
         quantity: 400,
         unit: "quintal",
@@ -120,7 +120,7 @@ export const seedCrops = internalAction({
       {
         name: "Infected Corn",
         type: "Corn",
-        imageUrl: "https://media.istockphoto.com/id/1318098022/photo/corn-field-with-pest-damage.jpg?s=612x612&w=0&k=20&c=7kF8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8=",
+        imageUrl: "https://images.unsplash.com/photo-1633436375096-2b2cd9926c7e?w=800",
         address: "Village Davangere, Karnataka",
         quantity: 220,
         unit: "quintal",
