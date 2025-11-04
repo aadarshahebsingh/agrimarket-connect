@@ -28,6 +28,7 @@ export const createCrop = mutation({
       isHealthy: v.boolean(),
     })),
     published: v.boolean(),
+    storageId: v.optional(v.id("_storage")),
   },
   handler: async (ctx, args) => {
     const user = await getCurrentUser(ctx);
@@ -35,15 +36,44 @@ export const createCrop = mutation({
       throw new Error("Not authenticated");
     }
 
+    let finalImageUrl = args.imageUrl;
+    
+    // If storageId is provided, get the URL from storage
+    if (args.storageId) {
+      const url = await ctx.storage.getUrl(args.storageId);
+      if (url) {
+        finalImageUrl = url;
+      }
+    }
+
+    const { storageId, ...cropData } = args;
+
     const cropId = await ctx.db.insert("crops", {
       farmerId: user._id,
       farmerName: user.name || "Anonymous Farmer",
-      ...args,
+      ...cropData,
+      imageUrl: finalImageUrl,
       views: 0,
       orders: 0,
     });
 
     return cropId;
+  },
+});
+
+// Add mutation to generate upload URL
+export const generateUploadUrl = mutation({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.storage.generateUploadUrl();
+  },
+});
+
+// Add mutation to get storage URL
+export const getImageUrl = mutation({
+  args: { storageId: v.id("_storage") },
+  handler: async (ctx, args) => {
+    return await ctx.storage.getUrl(args.storageId);
   },
 });
 

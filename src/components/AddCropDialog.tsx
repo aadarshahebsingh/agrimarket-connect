@@ -5,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
+import { useAction } from "convex/react";
+import { Id } from "@/convex/_generated/dataModel";
 import { Loader2, Upload } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -20,6 +22,7 @@ const UNITS = ["kg", "quintal", "ton", "piece"];
 export function AddCropDialog({ open, onOpenChange }: AddCropDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const createCrop = useMutation(api.crops.createCrop);
+  const generateUploadUrl = useMutation(api.crops.generateUploadUrl);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -32,12 +35,37 @@ export function AddCropDialog({ open, onOpenChange }: AddCropDialogProps) {
     pricePerUnit: "",
   });
   const [additionalImages, setAdditionalImages] = useState<string[]>([]);
+  const [uploadMethod, setUploadMethod] = useState<"url" | "upload">("url");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
+      let finalImageUrl = formData.imageUrl || "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800";
+
+      // Handle file upload if user selected upload method
+      if (uploadMethod === "upload" && selectedFile) {
+        const uploadUrl = await generateUploadUrl();
+        const result = await fetch(uploadUrl, {
+          method: "POST",
+          headers: { "Content-Type": selectedFile.type },
+          body: selectedFile,
+        });
+        const { storageId } = await result.json();
+        
+        // The storageId will be used directly as the imageUrl
+        // Convex will automatically serve it
+        finalImageUrl = storageId;
+      }
+
       // Mock disease analysis (in production, this would call Gemini API)
       const diseaseAnalysis = {
         isHealthy: Math.random() > 0.3,
@@ -54,7 +82,7 @@ export function AddCropDialog({ open, onOpenChange }: AddCropDialogProps) {
       await createCrop({
         name: formData.name,
         type: formData.type,
-        imageUrl: formData.imageUrl || "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800",
+        imageUrl: finalImageUrl,
         images: images.length > 0 ? images : undefined,
         location: {
           lat: 28.6139 + (Math.random() - 0.5) * 0.1,
@@ -82,6 +110,8 @@ export function AddCropDialog({ open, onOpenChange }: AddCropDialogProps) {
         pricePerUnit: "",
       });
       setAdditionalImages([]);
+      setSelectedFile(null);
+      setUploadMethod("url");
     } catch (error) {
       toast.error("Failed to add crop");
       console.error(error);
@@ -133,16 +163,53 @@ export function AddCropDialog({ open, onOpenChange }: AddCropDialogProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="imageUrl">Main Image URL</Label>
-            <Input
-              id="imageUrl"
-              value={formData.imageUrl}
-              onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-              placeholder="https://example.com/image.jpg"
-            />
-            <p className="text-xs text-muted-foreground">
-              Leave empty for default image
-            </p>
+            <Label>Main Image *</Label>
+            <div className="flex gap-2 mb-2">
+              <Button
+                type="button"
+                variant={uploadMethod === "url" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setUploadMethod("url")}
+              >
+                Image URL
+              </Button>
+              <Button
+                type="button"
+                variant={uploadMethod === "upload" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setUploadMethod("upload")}
+              >
+                Upload File
+              </Button>
+            </div>
+            
+            {uploadMethod === "url" ? (
+              <>
+                <Input
+                  id="imageUrl"
+                  value={formData.imageUrl}
+                  onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                  placeholder="https://example.com/image.jpg"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Leave empty for default image
+                </p>
+              </>
+            ) : (
+              <>
+                <Input
+                  id="imageFile"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+                {selectedFile && (
+                  <p className="text-xs text-muted-foreground">
+                    Selected: {selectedFile.name}
+                  </p>
+                )}
+              </>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -176,7 +243,7 @@ export function AddCropDialog({ open, onOpenChange }: AddCropDialogProps) {
               size="sm"
               onClick={() => setAdditionalImages([...additionalImages, ""])}
             >
-              + Add Image
+              + Add Image URL
             </Button>
           </div>
 
