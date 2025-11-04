@@ -15,6 +15,7 @@ export const seedCrops = internalAction({
         quantity: 500,
         unit: "quintal",
         pricePerUnit: 2500,
+        isHealthy: true,
       },
       {
         name: "Basmati Rice",
@@ -24,6 +25,7 @@ export const seedCrops = internalAction({
         quantity: 300,
         unit: "quintal",
         pricePerUnit: 4500,
+        isHealthy: true,
       },
       {
         name: "Sweet Corn",
@@ -33,33 +35,37 @@ export const seedCrops = internalAction({
         quantity: 200,
         unit: "quintal",
         pricePerUnit: 1800,
+        isHealthy: true,
       },
       {
         name: "Fresh Tomatoes",
         type: "Tomato",
-        imageUrl: "https://images.unsplash.com/photo-1546094096-0df4bcaaa337?w=800",
+        imageUrl: "https://media.istockphoto.com/id/1316145932/photo/table-top-view-of-spicy-food.jpg?s=612x612&w=0&k=20&c=eaKRSIAoRGHMibSfahMyQS6iFADyVy1pnPdy1O5rZ98=",
         address: "Village Nashik, Maharashtra",
         quantity: 150,
         unit: "quintal",
         pricePerUnit: 2000,
+        isHealthy: true,
       },
       {
         name: "Organic Potatoes",
         type: "Potato",
-        imageUrl: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=800",
+        imageUrl: "https://media.istockphoto.com/id/157430678/photo/three-potatoes.jpg?s=612x612&w=0&k=20&c=qkMoKnmNMoOXyUZZf6B-sNHDRu5ChtZDm7hKe76R2yg=",
         address: "Village Agra, Uttar Pradesh",
         quantity: 400,
         unit: "quintal",
         pricePerUnit: 1200,
+        isHealthy: true,
       },
       {
         name: "Red Onions",
         type: "Onion",
-        imageUrl: "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=800",
+        imageUrl: "https://media.istockphoto.com/id/1333073621/photo/red-onion-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=xOdZKBwXF5Ks5Hv5F-Tz5Zz5Zz5Zz5Zz5Zz5Zz5Zz5Zz5=",
         address: "Village Lasalgaon, Nashik, Maharashtra",
         quantity: 250,
         unit: "quintal",
         pricePerUnit: 1500,
+        isHealthy: true,
       },
       {
         name: "Fresh Carrots",
@@ -69,6 +75,7 @@ export const seedCrops = internalAction({
         quantity: 100,
         unit: "quintal",
         pricePerUnit: 2200,
+        isHealthy: true,
       },
       {
         name: "Green Cabbage",
@@ -78,15 +85,27 @@ export const seedCrops = internalAction({
         quantity: 180,
         unit: "quintal",
         pricePerUnit: 1600,
+        isHealthy: true,
       },
       {
-        name: "Golden Wheat",
+        name: "Infected Wheat Crop",
         type: "Wheat",
-        imageUrl: "https://images.unsplash.com/photo-1595855759920-86582396756a?w=800",
+        imageUrl: "https://media.istockphoto.com/id/1322157562/photo/wheat-field-damaged-by-heavy-rain-and-hail.jpg?s=612x612&w=0&k=20&c=9kF8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8=",
         address: "Village Ludhiana, Punjab",
         quantity: 600,
         unit: "quintal",
-        pricePerUnit: 2400,
+        pricePerUnit: 1800,
+        isHealthy: false,
+      },
+      {
+        name: "Diseased Wheat",
+        type: "Wheat",
+        imageUrl: "https://media.istockphoto.com/id/1354053364/photo/wheat-crop-damaged-by-disease.jpg?s=612x612&w=0&k=20&c=8kF8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8=",
+        address: "Village Meerut, Uttar Pradesh",
+        quantity: 400,
+        unit: "quintal",
+        pricePerUnit: 1600,
+        isHealthy: false,
       },
       {
         name: "Premium Rice",
@@ -96,15 +115,27 @@ export const seedCrops = internalAction({
         quantity: 350,
         unit: "quintal",
         pricePerUnit: 4200,
+        isHealthy: true,
       },
       {
-        name: "Yellow Corn",
+        name: "Infected Corn",
         type: "Corn",
-        imageUrl: "https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=800",
+        imageUrl: "https://media.istockphoto.com/id/1318098022/photo/corn-field-with-pest-damage.jpg?s=612x612&w=0&k=20&c=7kF8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8=",
         address: "Village Davangere, Karnataka",
         quantity: 220,
         unit: "quintal",
-        pricePerUnit: 1700,
+        pricePerUnit: 1400,
+        isHealthy: false,
+      },
+      {
+        name: "Healthy Yellow Corn",
+        type: "Corn",
+        imageUrl: "https://images.unsplash.com/photo-1603048588665-791ca8aea617?w=800",
+        address: "Village Bangalore, Karnataka",
+        quantity: 280,
+        unit: "quintal",
+        pricePerUnit: 1900,
+        isHealthy: true,
       },
       {
         name: "Cherry Tomatoes",
@@ -114,6 +145,7 @@ export const seedCrops = internalAction({
         quantity: 80,
         unit: "quintal",
         pricePerUnit: 3500,
+        isHealthy: true,
       },
       {
         name: "Baby Potatoes",
@@ -123,6 +155,7 @@ export const seedCrops = internalAction({
         quantity: 120,
         unit: "quintal",
         pricePerUnit: 2800,
+        isHealthy: true,
       },
       {
         name: "White Onions",
@@ -132,6 +165,7 @@ export const seedCrops = internalAction({
         quantity: 200,
         unit: "quintal",
         pricePerUnit: 1400,
+        isHealthy: true,
       },
       {
         name: "Organic Carrots",
@@ -141,18 +175,26 @@ export const seedCrops = internalAction({
         quantity: 90,
         unit: "quintal",
         pricePerUnit: 2500,
+        isHealthy: true,
       },
     ];
 
     console.log("Starting to seed crops...");
 
     for (const crop of cropData) {
-      const diseaseAnalysis = {
-        isHealthy: Math.random() > 0.3,
-        diseaseName: Math.random() > 0.3 ? undefined : "Leaf Blight",
-        confidence: Math.random() > 0.3 ? undefined : 0.85,
-        remedy: Math.random() > 0.3 ? undefined : "Apply fungicide and ensure proper drainage",
-      };
+      const diseaseAnalysis = crop.isHealthy
+        ? {
+            isHealthy: true,
+            diseaseName: undefined,
+            confidence: undefined,
+            remedy: undefined,
+          }
+        : {
+            isHealthy: false,
+            diseaseName: "Leaf Blight",
+            confidence: 0.85,
+            remedy: "Apply fungicide and ensure proper drainage",
+          };
 
       const harvestDate = new Date();
       harvestDate.setDate(harvestDate.getDate() + Math.floor(Math.random() * 60) + 15);
